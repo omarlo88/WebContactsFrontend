@@ -1,0 +1,36 @@
+  # Fichier de déployement webappcontacts de l'application sur kubernetes
+  apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+  kind: Deployment
+  metadata:
+    name: webappcontacts-deployment
+  spec:
+    selector:
+      matchLabels:
+        app: webappcontacts
+    replicas: 2 # tells deployment to run 2 pods matching the template
+    template:
+      metadata:
+        labels:
+          app: webappcontacts
+      spec:
+        containers:
+          - name: webappcontacts
+            image: loomar/lo-omar-repository:v2 # l'image qui se trouve dans le docker hub
+            ports:
+              - containerPort: 80 # port inside container
+
+---
+  kind: Service
+  apiVersion: v1
+  metadata:
+    name: webappcontacts-service
+  spec:
+    selector:
+      app: webappcontacts
+    ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30000
+    type: NodePort # Si on est dans le cloud on utilise LoadBalancer
+
